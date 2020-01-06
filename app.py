@@ -1,9 +1,32 @@
 # app.py
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+import requests
 
 app = Flask(__name__)
 CORS(app)
+
+@app.route('/api/HTTP/GET/', methods=['GET'])
+@app.route('/api/HTTP/POST/', methods=['GET'])
+def visit_url():
+    print(request.values)
+    url = request.values.get("url", None)
+    method = request.values.get("method", None)
+    print(url, method)
+    r = requests.request(method, url)
+
+    response = {
+        "status": r.status_code,
+        "errors": {},
+        "data": {
+            "url": url,
+            "response": r.request.body,
+            "request": ""
+        }
+    }
+
+    # Return the response in json format
+    return jsonify(response)
 
 @app.route('/getmsg/', methods=['GET'])
 def respond():

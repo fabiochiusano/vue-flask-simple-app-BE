@@ -4,13 +4,14 @@ from flask_cors import CORS
 import requests
 from flask_sqlalchemy import SQLAlchemy
 from flask_heroku import Heroku
-from models import Response
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 CORS(app)
 heroku = Heroku(app)
 db = SQLAlchemy(app)
+
+import models
 
 @app.route('/api/HTTP/GET/', methods=['GET'])
 @app.route('/api/HTTP/POST/', methods=['GET'])
@@ -44,7 +45,7 @@ def visit_url():
     }
 
     try:
-        respRow = Response(**resp)
+        respRow = models.Response(**resp)
         db.session.add(respRow)
         db.session.commit()
         resp["id"] = respRow.id

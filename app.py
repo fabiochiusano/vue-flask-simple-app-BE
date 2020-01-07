@@ -48,7 +48,7 @@ def visit_url():
         "reason": reason,
         "request_date": request_date,
         "request_server": request_server,
-        "id": uuid.uuid4().hex
+        "id": uuid.uuid4().int
     }
 
     try:

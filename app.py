@@ -8,69 +8,52 @@ CORS(app)
 
 @app.route('/api/HTTP/GET/', methods=['GET'])
 @app.route('/api/HTTP/POST/', methods=['GET'])
+@app.route('/api/HTTP/PUT/', methods=['GET'])
+@app.route('/api/HTTP/DELETE/', methods=['GET'])
+@app.route('/api/HTTP/INFO/', methods=['GET'])
+@app.route('/api/HTTP/DUMB/', methods=['GET'])
 def visit_url():
-    print(request.values)
     url = request.values.get("url", None)
-    method = request.values.get("method", None)
-    print(url, method)
+    method = request.url.split("/api/HTTP/")[1].split("/")[0]
     r = requests.request(method, url)
+
+    http_version = r.raw.version
+    http_version_string = "HTTP/" + ".".join(str(http_version))
+    status_code = r.status_code
+    reason = r.reason
+    request_date = " ".join(r.headers["Date"].split(" ")[:4])
+    request_server = r.headers["Server"]
+
+    resp = {
+        "http_version_string": http_version_string,
+        "status_code": status_code,
+        "reason": reason,
+        "request_date": request_date,
+        "request_server": request_server
+    }
+
+    req = {
+        "method": method,
+        "url": url
+    }
+
+    print(url, method)
+    print(request.url)
 
     response = {
         "status": r.status_code,
         "errors": {},
         "data": {
             "url": url,
-            "response": r.request.body,
-            "request": ""
+            "response": resp,
+            "request": req
         }
     }
 
     # Return the response in json format
     return jsonify(response)
 
-@app.route('/getmsg/', methods=['GET'])
-def respond():
-    # Retrieve the name from url parameter
-    name = request.args.get("name", None)
 
-    # For debugging
-    print(f"got name {name}")
-
-    response = {}
-
-    # Check if user sent a name at all
-    if not name:
-        response["ERROR"] = "no name found, please send a name."
-    # Check if the user entered a number not a name
-    elif str(name).isdigit():
-        response["ERROR"] = "name can't be numeric."
-    # Now the user entered a valid name
-    else:
-        response["MESSAGE"] = f"Welcome {name} to our awesome platform!!"
-
-    # Return the response in json format
-    return jsonify(response)
-
-@app.route('/post/', methods=['POST'])
-def post_something():
-    param = request.form.get('name')
-    print(param)
-    # You can add the test cases you made in the previous function, but in our case here you are just testing the POST functionality
-    if param:
-        return jsonify({
-            "Message": f"Welcome {param} to our awesome platform!!",
-            # Add this option to distinct the POST request
-            "METHOD" : "POST"
-        })
-    else:
-        return jsonify({
-            "ERROR": "no name found, please send a name."
-        })
-
-# A welcome message to test our server
-@app.route('/')
-def index():
-    return "<h1>Welcome to our server !!</h1>"
 
 if __name__ == '__main__':
     # Threaded option to enable multiple instances for multiple user access support

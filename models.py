@@ -12,13 +12,14 @@ class Response(db.Model):
     url_hashed = db.Column(db.String())
 
     def __init__(self, http_version_string, status_code, reason,
-                request_date, request_server, url_hashed):
+                request_date, request_server, url_hashed, id):
         self.http_version_string = http_version_string
         self.status_code = status_code
         self.reason = reason
         self.request_date = request_date
         self.request_server = request_server
         self.url_hashed = url_hashed
+        self.id = id
 
     def serialize(self):
         return {

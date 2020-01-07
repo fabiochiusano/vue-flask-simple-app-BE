@@ -9,14 +9,16 @@ class Response(db.Model):
     reason = db.Column(db.String())
     request_date = db.Column(db.String())
     request_server = db.Column(db.String())
+    url_hashed = db.Column(db.String())
 
     def __init__(self, http_version_string, status_code, reason,
-                request_date, request_server):
+                request_date, request_server, url_hashed):
         self.http_version_string = http_version_string
         self.status_code = status_code
         self.reason = reason
         self.request_date = request_date
         self.request_server = request_server
+        self.url_hashed = url_hashed
 
     def serialize(self):
         return {
@@ -25,5 +27,6 @@ class Response(db.Model):
             'status_code': self.status_code,
             'reason': self.reason,
             'request_date': self.request_date,
-            'request_server': self.request_server
+            'request_server': self.request_server,
+            'url_hashed': self.url_hashed
         }

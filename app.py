@@ -47,17 +47,18 @@ def visit_url():
         "status_code": status_code,
         "reason": reason,
         "request_date": request_date,
-        "request_server": request_server,
-        "id": uuid.uuid4().int
+        "request_server": request_server
     }
 
     try:
         respRow = models.Response(**resp)
         db.session.add(respRow)
         db.session.commit()
+        resp["id"] = respRow.id
     except Exception as e:
         print(str(e))
         errors["on_db_add"] = str(e)
+        resp["id"] = ""
 
     req = {
         "method": method,

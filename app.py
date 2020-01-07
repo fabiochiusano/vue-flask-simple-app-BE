@@ -5,6 +5,7 @@ import requests
 from flask_sqlalchemy import SQLAlchemy
 from flask_heroku import Heroku
 import hashlib
+import uuid
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False

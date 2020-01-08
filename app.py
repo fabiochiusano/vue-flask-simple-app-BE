@@ -40,9 +40,11 @@ def visit_url():
     reason = r.reason
     request_date = " ".join(r.headers["Date"].split(" ")[:4])
     request_server = r.headers["Server"]
+    url_hashed = hash_url(url)
 
     resp = {
-        "url_hashed": hash_url(url),
+        "url_hashed": url_hashed,
+        "url": url,
         "http_version_string": http_version_string,
         "status_code": status_code,
         "reason": reason,
@@ -60,6 +62,14 @@ def visit_url():
         errors["on_db_add"] = str(e)
         resp["id"] = ""
 
+    try:
+        resp_list = models.Response.query.filter_by(url_hashed=url_hashed).all()
+        print(resp_list)
+        resp_list = [r.serialize() for r in resp_list]
+    except Exception as e:
+        resp_list = []
+        errors["on_db_query"] = str(e)
+
     req = {
         "method": method,
         "url": url
@@ -74,7 +84,8 @@ def visit_url():
         "data": {
             "url": url,
             "response": resp,
-            "request": req
+            "request": req,
+            "responses": resp_list
         }
     }
 
